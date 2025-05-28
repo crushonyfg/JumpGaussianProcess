@@ -28,7 +28,14 @@ def loglikelihood(logtheta, covfunc1, covfunc2, x, y, nargout=1):
 
     # Cholesky decomposition of the covariance matrix K
     K += 1e-6 * np.eye(K.shape[0])
-    L = np.linalg.cholesky(K)
+    # L = np.linalg.cholesky(K)
+    try:
+        L = np.linalg.cholesky(K)
+    except:
+        # 如果 Cholesky 失败，使用 SVD
+        U, s, Vt = np.linalg.svd(K)
+        s = np.maximum(s, 1e-12)  # 确保奇异值不为零
+        L = U @ np.diag(np.sqrt(s))
     
     # Solve for alpha
     alpha = cho_solve((L, True), y)

@@ -48,8 +48,11 @@ def variationalEM(x, y, xt, px, pxt, w, logtheta, cv, bVerbose=False):
     bLearnHyp = True
     
     if bLearnHyp:
-        logtheta = minimize(loglikelihood, logtheta0, args=(cv[0], cv[1], x[r1,:], y[r1]-ms), 
-                          method='L-BFGS-B', options={'maxiter': nIter}).x
+        try:
+            logtheta = minimize(loglikelihood, logtheta0, args=(cv[0], cv[1], x[r1,:], y[r1]-ms), 
+                            method='L-BFGS-B', options={'maxiter': nIter}).x
+        except:
+            logtheta = logtheta0
     
     sigma = np.exp(logtheta[-1])
     
