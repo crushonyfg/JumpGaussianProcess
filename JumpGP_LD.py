@@ -143,5 +143,5 @@ if __name__ == "__main__":
     x_train = np.random.rand(100, 2)
     y_train = np.random.rand(100)
     x_test = np.random.rand(20, 2)
-    mu_t, sig2_t, model, h = JumpGP_LD(x_train, y_train.reshape(-1, 1), x_test[0].reshape(1, -1), 'VEM', 1)
+    mu_t, sig2_t, model, h = JumpGP_LD(x_train, y_train.reshape(-1, 1), x_test, 'VEM', 1)
     print("Successfully run the example!")
