@@ -100,7 +100,8 @@ class JumpGP:
         if len(mu.shape) != 1:
             raise ValueError(f"Arrays should be 1-dimensional, got shape {mu.shape}")
 
-        rmse, mean_crps = compute_metrics(mu, sig2, yt)
+        sigmas = np.sqrt(sig2)
+        rmse, mean_crps = compute_metrics(mu, sigmas, yt)
 
         return rmse, mean_crps
     
