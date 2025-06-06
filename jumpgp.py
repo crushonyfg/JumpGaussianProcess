@@ -32,19 +32,19 @@ def find_neighborhoods(X_test, X_train, Y_train, M):
 
 def compute_metrics(predictions, sigmas, Y_test):
     """Compute RMSE and mean CRPS for Gaussian predictive distributions."""
-    # 计算 RMSE
+    # compute RMSE
     rmse = np.sqrt(np.mean((predictions - Y_test)**2))
     
-    # 计算 CRPS
+    # compute CRPS 
     # z = (y - μ) / σ
     z = (Y_test - predictions) / sigmas
-    # 标准正态 CDF 和 PDF
+    # standard normal CDF and PDF
     cdf = 0.5 * (1 + scipy.special.erf(z / np.sqrt(2)))
     pdf = np.exp(-0.5 * z**2) / np.sqrt(2 * np.pi)
-    # CRPS 闭式公式
+    # CRPS closed-form formula
     crps = sigmas * (z * (2 * cdf - 1) + 2 * pdf - 1 / np.sqrt(np.pi))
     
-    # 平均 CRPS
+    # mean CRPS
     mean_crps = np.mean(crps)
     
     return rmse, mean_crps
@@ -87,16 +87,16 @@ class JumpGP:
         sig2 = self.jump_results["sig2"]
         models = self.jump_results["models"]
 
-        # 确保输入都是一维数组
+        # ensure inputs are 1-dimensional arrays
         mu = np.asarray(mu).ravel()
         sig2 = np.asarray(sig2).ravel()
         yt = np.asarray(yt).ravel()
 
-        # 检查维度是否匹配
+        # check if the dimensions match
         if not (mu.shape == sig2.shape == yt.shape):
             raise ValueError(f"Shape mismatch: mu {mu.shape}, sig2 {sig2.shape}, yt {yt.shape} should all be the same")
         
-        # 检查是否为一维数组
+        # check if the arrays are 1-dimensional
         if len(mu.shape) != 1:
             raise ValueError(f"Arrays should be 1-dimensional, got shape {mu.shape}")
 

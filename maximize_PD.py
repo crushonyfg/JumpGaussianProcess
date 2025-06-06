@@ -24,9 +24,9 @@ import sys
 import warnings
 import numpy as np
 
-# 忽略特定警告
+# ignore specific warnings
 warnings.filterwarnings('ignore', category=RuntimeWarning)
-# 或者使用 numpy 的设置
+# or use numpy's settings
 np.seterr(divide='ignore', invalid='ignore')
 
 import numpy as np

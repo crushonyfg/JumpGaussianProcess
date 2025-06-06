@@ -56,7 +56,7 @@ def variationalEM(x, y, xt, px, pxt, w, logtheta, cv, bVerbose=False):
     
     sigma = np.exp(logtheta[-1])
     
-    # 更严格的 sigma 范围
+    # stricter sigma range
     # sigma = np.clip(sigma, 1e-3, 1e3)
     # print("sigma", sigma)
     
@@ -64,17 +64,17 @@ def variationalEM(x, y, xt, px, pxt, w, logtheta, cv, bVerbose=False):
         # E-step: update q(fs)
         K = cv[0](cv[1], logtheta, x)
         tmp = sigma**2 * D_g + K
-        # 添加正则化项防止奇异性
+        # add regularization term to prevent singularity
         eps = 1e-6
         tmp += eps * np.eye(tmp.shape[0])
-        # 检查和处理无穷大/NaN值
+        # check and handle infinite/NaN values
         # tmp = np.nan_to_num(tmp, nan=1e-6, posinf=1e6, neginf=-1e6)
         try:
             L = cholesky(tmp, lower=True)
         except:
-            # 如果 Cholesky 失败，使用 SVD
+            # if Cholesky fails, use SVD
             U, s, Vt = np.linalg.svd(tmp)
-            s = np.maximum(s, 1e-12)  # 确保奇异值不为零
+            s = np.maximum(s, 1e-12)  # ensure singular values are not zero
             L = U @ np.diag(np.sqrt(s))
         LK = np.linalg.solve(L, K)
         Sigma = K - LK.T @ LK

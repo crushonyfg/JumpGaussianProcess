@@ -19,12 +19,12 @@ class FigureParams:
     n_neighbors: int = 40
     path: str = 'D:/new_windows/PhD/spring2025/park/JumpGP_code_py/results'
 
-# ... 保留 check_and_reshape 函数 ...
+# ... keep check_and_reshape function ...
 
 def generate_figures(params: FigureParams):
     if not os.path.exists(params.path):
         os.makedirs(params.path)
-    # 模拟案例
+    # simulate case
     x, y, xt, yt, y0, gx, r, bw = simulate_case(params.caseno, params.sig, params.percent_train)
 
     L = len(gx)
@@ -36,7 +36,7 @@ def generate_figures(params: FigureParams):
 
     bw = np.reshape(bw, (L, L))
 
-    # 定义不同案例的测试点
+    # define test points for different cases
     xs_cases = {
         1: np.array([[20, 33], [16, 16], [7, 5], [25, 36], [8, 32], [38, 18]]),
         2: np.array([[7, 22], [17, 22], [35, 22], [5, 28], [22, 35], [31, 7]]),
@@ -45,7 +45,7 @@ def generate_figures(params: FigureParams):
     }
     xs = xs_cases[params.caseno]
 
-    # 归一化测试点
+    # normalize test points
     xs = xs / len(np.arange(0, 1.025, 0.025)) - 0.5
 
     Nt = xs.shape[0]
@@ -57,9 +57,9 @@ def generate_figures(params: FigureParams):
 
     for j in range(4):
         k = 1 if j < 4 else 1
-        xt = xs[j, :]  # 每个子图的测试点
+        xt = xs[j, :]  # test point for each subplot
 
-        # 查找最近的邻居
+        # find nearest neighbors
         nbrs = NearestNeighbors(n_neighbors=params.n_neighbors, algorithm='auto').fit(x)
         idx = nbrs.kneighbors([xt], return_distance=False)[0]
         lx, ly = x[idx, :], y[idx]
@@ -73,27 +73,27 @@ def generate_figures(params: FigureParams):
 
         plt.imshow(np.reshape(yt, (L, L)), cmap='gray', extent=(gx[0], gx[-1], gx[-1], gx[0]))
         
-        # 绘制局部训练点
+        # plot local training points
         plt.scatter(lx[:, 0], lx[:, 1], color='r', marker='+', s=100, label='Local Training Inputs')
         
-        # 绘制测试点
+        # plot test point
         plt.scatter(xt[0,0], xt[0,1], color='c', marker='o', s=100, label='Test Point')
         
         current_ax = plt.gca()
         
-        # 函数用于复制 PathCollection
+        # function for copying PathCollection
         def copy_path_collection(artist, ax):
-            # 获取 PathCollection 的属性
-            offsets = artist.get_offsets()  # 获取点的坐标
-            sizes = artist.get_sizes()  # 获取点的大小
-            facecolors = artist.get_facecolor()  # 获取点的颜色
-            edgecolors = artist.get_edgecolor()  # 获取边缘颜色
+            # get the properties of PathCollection
+            offsets = artist.get_offsets()  # get the coordinates of the points
+            sizes = artist.get_sizes()  # get the size of the points
+            facecolors = artist.get_facecolor()  # get the color of the points
+            edgecolors = artist.get_edgecolor()  # get the edge color
         
-            # 重新绘制散点图
+            # plot the scatter plot again
             return ax.scatter(offsets[:, 0], offsets[:, 1], s=sizes, c=facecolors, 
                             edgecolor=edgecolors, alpha=artist.get_alpha(), label=artist.get_label())
         
-        # 重新绘制 h3
+        # plot h3 again
         new_artist = copy_path_collection(h3[0], current_ax)
         a = np.array([[1, -0.5], [1, 0.5]])
         b_plot = -np.dot(a, model['w'][0:2]) / model['w'][2]
@@ -104,21 +104,21 @@ def generate_figures(params: FigureParams):
         #                 color=line.get_color(), linewidth=line.get_linewidth(),
         #                 label=line.get_label())
         plt.imshow(np.reshape(yt, (L, L)), cmap='gray', extent=(gx[0], gx[-1], gx[-1], gx[0]))
-        # 添加图例
+        # add legend
         plt.legend()
 
         plt.savefig(f'{params.path}caseno_{params.caseno}_figure_{j}_{current_time}.png', dpi=300, bbox_inches='tight')
         plt.clf()
 
-# 使用示例
+# example usage
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='生成图形')
-    parser.add_argument('--percent_train', type=float, default=0.5, help='训练数据的百分比')
-    parser.add_argument('--sig', type=float, default=2, help='信号强度')
-    parser.add_argument('--caseno', type=int, default=2, help='案例编号')
-    parser.add_argument('--sc', type=float, default=0.025/0.02, help='比例因子')
-    parser.add_argument('--n_neighbors', type=int, default=40, help='邻居数量')
-    parser.add_argument('--path', type=str, default='D:/new_windows/PhD/spring2025/park/JumpGP_code_py/results', help='结果保存路径')
+    parser = argparse.ArgumentParser(description='generate figures')
+    parser.add_argument('--percent_train', type=float, default=0.5, help='percentage of training data')
+    parser.add_argument('--sig', type=float, default=2, help='signal strength')
+    parser.add_argument('--caseno', type=int, default=2, help='case number')
+    parser.add_argument('--sc', type=float, default=0.025/0.02, help='scaling factor')
+    parser.add_argument('--n_neighbors', type=int, default=40, help='number of neighbors')
+    parser.add_argument('--path', type=str, default='D:/new_windows/PhD/spring2025/park/JumpGP_code_py/results', help='path to save results')
 
     args = parser.parse_args()
 

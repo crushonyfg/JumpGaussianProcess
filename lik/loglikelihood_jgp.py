@@ -41,9 +41,9 @@ def loglikelihood_jgp(logtheta, covfunc1, covfunc2, x, y, Sigma, nargout=1):
     try:
         L = cholesky(K)
     except:
-        # 如果 Cholesky 失败，使用 SVD
+        # if Cholesky fails, use SVD
         U, s, Vt = np.linalg.svd(K)
-        s = np.maximum(s, 1e-12)  # 确保奇异值不为零
+        s = np.maximum(s, 1e-12)  # ensure singular values are not zero
         L = U @ np.diag(np.sqrt(s))
     
     # Solve for alpha and beta

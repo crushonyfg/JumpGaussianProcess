@@ -17,18 +17,18 @@
 import numpy as np
 
 def calculate_gx(px, w):
-    N = px.shape[0]  # 样本数量
-    # 构建基矩阵 phi_x，首列为1，表示偏差项
+    N = px.shape[0]  # number of samples
+    # build basis matrix phi_x, the first column is 1, representing the bias term
     phi_x = np.column_stack((np.ones(N), px))
     
-    # 计算边界函数值 gx
+    # compute boundary function values gx
     gx = phi_x @ w
     
     return gx, phi_x #gx shape (N,), phi_x shape (N,d+1)
 
-# 示例使用
+# example usage
 if __name__ == "__main__":
-    px = np.random.rand(100, 2)  # 100个样本，2维特征
-    w = np.random.rand(3)        # 包含偏差项的权重向量
+    px = np.random.rand(100, 2)  # 100 samples, 2 features
+    w = np.random.rand(3)        # weight vector including the bias term
     gx, phi_x = calculate_gx(px, w)
     print("gx:", gx)

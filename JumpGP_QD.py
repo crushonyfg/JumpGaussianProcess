@@ -51,7 +51,7 @@ def JumpGP_QD(x, y, xt, mode, bVerbose=False, *args):
         gx, _ = calculate_gx(px, w_d)
         r = gx >= 0
         r1 = r.flatten()
-        # 这里直接用loglikelihood求和
+        # directly use loglikelihood to sum
         fd.append(
             loglikelihood(logtheta, cv[0], cv[1], x[r1, :], y[r1]) +
             loglikelihood(logtheta, cv[0], cv[1], x[~r1, :], y[~r1])

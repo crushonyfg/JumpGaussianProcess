@@ -16,32 +16,32 @@ from calculate_gx import calculate_gx
 class FigureParams:
     percent_train: float = 0.5
     sig: float = 2
-    caseno: int = 6  # 使用4为图8，使用6为图9
+    caseno: int = 6  # use 4 for figure 8, use 6 for figure 9
     n_neighbors: int = 40
     path: str = 'D:/new_windows/PhD/spring2025/park/JumpGP_code_py/results'
 
 def generate_figure(params):
     if not os.path.exists(params.path):
         os.makedirs(params.path)
-    # 生成数据
+    # generate data
     x, y, xt, yt, y0, gx, r, bw = simulate_case(params.caseno, params.sig, params.percent_train)
     L = len(gx)
 
-    # 数据中心化
+    # center the data
     my = np.mean(yt)
     y, yt, y0 = y - my, yt - my, y0 - my
 
-    # 获取边界
+    # get the boundary
     bw = bw.reshape(L, L)
 
-    # 定义测试点
+    # define test points
     xs_cases = {
         4: np.array([[37, 11], [36, 36], [8, 35], [17, 24], [21, 21], [34, 32]]),
         6: np.array([[27, 21], [10, 27], [37, 31], [9, 19], [21, 22], [27, 15]])
     }
     xs = xs_cases[params.caseno] / len(np.arange(0, 1.025, 0.025)) - 0.5
 
-    # 绘图设置
+    # plot settings
     # fig, axs = plt.subplots(3, 4, figsize=(15, 15))
     sel = [1, 2, 3, 6]
 
@@ -51,14 +51,14 @@ def generate_figure(params):
         k = 1 if j < 4 else 1
         xt = xs[j, :]
 
-        # 找到k个最近邻
+        # find k nearest neighbors
         nbrs = NearestNeighbors(n_neighbors=params.n_neighbors, algorithm='auto').fit(x)
         idx = nbrs.kneighbors([xt], return_distance=False)[0]
         lx, ly = x[idx, :], y[idx]
         ly = ly.reshape(-1, 1)
         xt = xt.reshape(1, -1)
 
-        # 选择JumpGP函数
+        # select JumpGP function
         if k == 0:
             mu_t, sig2_t, model, h3 = JumpGP_QD(lx, ly, xt, 'CEM', True)
         else:
@@ -70,13 +70,13 @@ def generate_figure(params):
         plt.scatter(xt[0, 0], xt[0, 1], color='c', marker='o', s=100, label='test point')
         current_ax = plt.gca()
         
-        # 函数用于复制 PathCollection
+        # function to copy PathCollection
         def copy_path_collection(artist, ax):
             if isinstance(artist, list):
-                # 如果artist是列表，分别处理每个元素
+                # if artist is a list, process each element separately
                 new_artists = []
                 for art in artist:
-                    if isinstance(art, PathCollection):  # 使用正确的PathCollection类
+                    if isinstance(art, PathCollection):  # use the correct PathCollection class
                         offsets = art.get_offsets()
                         sizes = art.get_sizes()
                         facecolors = art.get_facecolor()
@@ -84,11 +84,11 @@ def generate_figure(params):
                         new_art = ax.scatter(offsets[:, 0], offsets[:, 1], s=sizes, c=facecolors, 
                                           edgecolor=edgecolors, alpha=art.get_alpha(), label=art.get_label())
                         new_artists.append(new_art)
-                    else:  # 对于其他类型的artist（包括contour），直接使用
+                    else:  # for other types of artist (including contour), use directly
                         new_artists.append(art)
                 return new_artists
             else:
-                # 如果artist是单个PathCollection
+                # if artist is a single PathCollection
                 if isinstance(artist, PathCollection):
                     offsets = artist.get_offsets()
                     sizes = artist.get_sizes()
@@ -99,7 +99,7 @@ def generate_figure(params):
                 else:
                     return artist
         
-        # 重新绘制 h3
+        # redraw h3
         new_artist = copy_path_collection(h3, current_ax)
 
         d = x.shape[1]
@@ -117,7 +117,7 @@ def generate_figure(params):
         L1 = len(gx_range)
         gy_reshaped = np.reshape(gy, (L1, L1))
 
-        # 绘制等高线
+        # plot contour
         plt.contour(gx_range, gx_range, gy_reshaped, levels=[0], colors='r')
 
         # if i == 1 and k == 1:
@@ -129,25 +129,6 @@ def generate_figure(params):
         current_time = datetime.now().strftime("%Y%m%d_%H")
         plt.savefig(f'{params.path}caseno_{params.caseno}_figure_{j}_{current_time}.png', dpi=300, bbox_inches='tight')
         plt.clf()
-
-    # 添加图例
-    # axs[2, 3].axis('off')
-    # axs[2, 3].legend([h1, ax.lines[0], h3], 
-    #                  ['测试点', '局部训练输入', '选定的局部设计'],
-    #                  loc='center', ncol=1, frameon=False)
-
-    # # 调整布局
-    # plt.tight_layout()
-
-    # # 为行添加标题
-    # titles = ['(a) JPG-CEM', '(b) JPG-VEM']
-    # for idx, title in enumerate(titles):
-    #     fig.text(0.5, 0.98 - (idx * 0.33), title, ha='center', fontsize=16)
-
-    # # 保存图片
-    # current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-    # plt.savefig(f'{params.path}caseno_{params.caseno}_figure_{current_time}.png', dpi=300, bbox_inches='tight')
-    # plt.show()
 
 if __name__ == "__main__":
     params = FigureParams()

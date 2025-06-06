@@ -67,11 +67,11 @@ def local_linearfit(x0, y0, xt):
     
     return beta, X
 
-# 测试代码示例
+# test code example
 if __name__ == "__main__":
-    x0 = np.random.rand(100, 2)  # 100个样本，2个特征
-    y0 = np.random.rand(100)  # 100个响应值
-    xt = np.random.rand(2)  # 测试点（2个特征）
+    x0 = np.random.rand(100, 2)  # 100 samples, 2 features
+    y0 = np.random.rand(100)  # 100 response values
+    xt = np.random.rand(2)  # test point (2 features)
 
     beta, X = local_linearfit(x0, y0, xt)
     print("beta:", beta)
