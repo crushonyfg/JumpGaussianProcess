@@ -13,8 +13,8 @@ JumpGP is a Python implementation of Jump Gaussian Process, which performs local
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/JumpGP.git
-cd JumpGP
+git clone https://github.com/crushonyfg/JumpGaussianProcess.git
+cd JumpGaussianProcess
 ```
 
 ## Dependencies
