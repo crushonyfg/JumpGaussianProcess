@@ -38,7 +38,7 @@ y_test = np.random.rand(20)       # test targets
 
 # Initialize and fit JumpGP
 model = JumpGP(x_train, y_train, x_test, 
-               L=2,           # Order of detrending (1: linear, 2: quadratic)
+               L=1,           # Order of detrending (1: linear, 2: quadratic)
                M=20,         # Number of nearest neighbors
                mode='VEM',   # Inference mode ('CEM' or 'VEM')
                bVerbose=False)
